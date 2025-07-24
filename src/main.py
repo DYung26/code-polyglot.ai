@@ -14,15 +14,29 @@ def load_module(path: str) -> str:
 
 @click.command()
 @click.argument('module_path', type=click.Path(exists=True))
-@click.option('--languages', '-l', multiple=True, default=['go', 'csharp', 'cpp'],
-              help='Target languages: go, csharp, cpp, etc.')
-@click.option('--doc-id', type=str, default=None,
-              help='Google Docs ID to publish comments')
-def cli(module_path, languages, doc_id):
+@click.option(
+    '--current-language', '-c',
+    type=click.Choice(['cpp', 'csharp', 'go', 'js', 'javascript', 'python', 'php', 'java'], case_sensitive=False),
+    required=True,
+    help='The source language of the code snippets'
+)
+@click.option(
+    '--target-languages', '-t',
+    type=click.Choice(['cpp', 'csharp', 'go', 'js', 'javascript', 'python', 'php', 'java'], case_sensitive=False),
+    multiple=True,
+    default=['python'],
+    show_default=True,
+    help='Target languages(s) to convert to: go, csharp, cpp, etc. Can be used multiple times.'
+)
+@click.option(
+    '--doc-id', type=str, default=None,
+    help='Google Docs ID to publish comments'
+)
+def cli(module_path, current_language, target_languages, doc_id):
     content = load_module(module_path)
     ai = AIEngine()
-    translated = ai.translate_module(content, languages)
-    print(translated)
+    translated = ai.translate_module(content, current_language, target_languages)
+    # print(translated)
 
     service_account_file = str(os.getenv("SERVICE_ACCOUNT_FILE_PATH"))
     gdocs = GoogleDocsEngine(service_account_file, doc_id)

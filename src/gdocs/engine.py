@@ -15,10 +15,24 @@ class GoogleDocsEngine:
                 "text": text
             }
         }
+        style_request = {
+            "updateTextStyle": {
+                "range": {
+                    "startIndex": 1,
+                    "endIndex": 1 + len(text)
+                },
+                "textStyle": {
+                    "weightedFontFamily": {
+                        "fontFamily": "Montserrat"
+                    }
+                },
+                "fields": "weightedFontFamily"
+            }
+        }
 
         self.service.documents().batchUpdate(
             documentId=self.document_id,
-            body={"requests": [insert_request]}
+            body={"requests": [insert_request, style_request]}
         ).execute()
 
         doc = self.service.documents().get(documentId=self.document_id).execute()
@@ -49,17 +63,17 @@ class GoogleDocsEngine:
                     "updateTextStyle": {
                         "range": {"startIndex": open_line, "endIndex": end_index},
                         "textStyle": {
-                            "foregroundColor": {"color": {"rgbColor": rgb}}
+                            "foregroundColor": {"color": {"rgbColor": rgb}},
+                            "weightedFontFamily": {
+                                "fontFamily": "Montserrat"
+                            },
                         },
-                        "fields": "foregroundColor" # ,weightedFontFamily
+                        "fields": "foregroundColor, weightedFontFamily"
                     }
                 })
                 # reset for next block
                 open_line = None
                 current_lang = None
-                '''"weightedFontFamily": {
-                    "fontFamily": "Courier New"  # Monospace font for code
-                },'''
 
         # 4) Batch everything
         requests = style_requests

@@ -4,12 +4,12 @@ from .prompts import build_translation_prompt
 
 
 class AIEngine:
-    def __init__(self, model="gpt-4.1"):
+    def __init__(self, model="gpt-4o"):
         self.client = get_client()
         self.model = model
 
-    def translate_module(self, text: str, target_lang: List[str]) -> str:
-        prompt = build_translation_prompt(text, target_lang)
+    def translate_module(self, text: str, current_lang: str, target_langs: List[str]) -> str:
+        prompt = build_translation_prompt(text, current_lang, target_langs)
         # print("Prompt:\n", prompt)
         response = self.client.responses.create(
             model=self.model,

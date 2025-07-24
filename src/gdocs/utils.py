@@ -22,7 +22,7 @@ def get_index_of_line_start(document: dict, line_number: int) -> int:
                     lines.append((current_index, line))
                     current_index += len(line)
 
-    print(line_number, len(lines))
+    # print(line_number, len(lines))
     if line_number < len(lines):
         return lines[line_number][0]
     elif len(lines) == 0 and line_number == 0:
@@ -52,4 +52,5 @@ LANGUAGE_COLORS = {
     "python": {"red": 0.0, "green": 0.6, "blue": 0.0},      # greenish (from its snake-like logo palette)
     "php": {"red": 0.4, "green": 0.0, "blue": 0.8},         # deep purple (PHP branding)
     "java": {"red": 1.0, "green": 0.3, "blue": 0.0},        # orange-red (coffee logo color)
+    "section": {"red": 0.66, "green": 0.66, "blue": 0.66},  # neutral gray
 }
