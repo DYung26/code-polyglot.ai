@@ -13,7 +13,7 @@ If a direct translation is possible, do it. If not, like if it conveys something
 ### Instructions:
 
 1. **Prose**
-   - Find any sentence, phrase, or explanation tied to {current_lang}'s way of thinking.
+   - Find any sentence, phrase, or explanation tied to {current_lang}'s way of thinking, including one-words.
    - Wrap it in:
      ```section
      …original prose…
@@ -34,6 +34,7 @@ If a direct translation is possible, do it. If not, like if it conveys something
      ```end
 
 3. **General Rules**
+   - Do not forget any fence - section, {current_lang}, etc...
    - You must return the **entire original document**, with translations inserted after each relevant section.
    - Do **not** modify text outside fenced sections.
    - Do **not** summarize or explain anything outside the required instructions.
@@ -58,3 +59,63 @@ Before submitting:
 * No part of the original should be missing.
 * Fences should be correctly formatted and complete.
   """
+
+def build_instruction_prompt(
+    translated_doc: str,
+    original_lang: str,
+    target_lang: str
+) -> str:
+    """
+    Constructs a prompt that instructs the model to generate a structured translation instruction document
+    based on an already-translated Snyk Learn module.
+
+    Args:
+        translated_doc: The text of the already-translated module.
+        original_lang: The source language of the original module.
+        target_lang: The language into which the module has been translated.
+
+    Returns:
+        A formatted prompt string ready for the model.
+    """
+    return f"""
+INSTRUCTION:
+*Include a link to the original module and indicate the translation {original_lang} → {target_lang} at the top.*
+
+Instructions for Translation
+
+1. Create a new Google Doc titled:
+   Snyk Learn Module: {{vulnerability name}} translation instructions {original_lang} → {target_lang}
+
+2. Copy all headings and subheadings from the original module.
+
+3. For each subheading:
+   - If code must change, write:
+     Replace the code snippet in this section with the one below:
+     {{new code snippet}}
+
+   - If it’s an interactive step {{#}}, write:
+     The code in step {{#}} should be replaced with:
+     {{replacement code or text}}
+
+   - If no change is needed, write:
+     Nothing needs to be changed in this section.
+
+4. Review: verify the document title format, all headings/subheadings,
+   and that each section has clear instructions or notes.
+
+5. Ensure every block of {target_lang} code is fenced in this format:
+     ```{target_lang}
+     …code…
+     ```end
+
+---
+
+NOW generate the **DONE TRANSLATION**–style instruction document from the translated module below:
+
+Original language: {original_lang} → {target_lang}
+
+Translated Module Text:
+```text
+{translated_doc}
+```
+"""

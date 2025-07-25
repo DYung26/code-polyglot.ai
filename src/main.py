@@ -29,24 +29,39 @@ def load_module(path: str) -> str:
     help='Target languages(s) to convert to: go, csharp, cpp, etc. Can be used multiple times.'
 )
 @click.option(
+    '--action', '-a',
+    type=click.Choice(['translate', 'instruct'], case_sensitive=False),
+    multiple=True,
+    default=['translate'],
+    show_default=True,
+    help='Target languages(s) to convert to: go, csharp, cpp, etc. Can be used multiple times.'
+)
+@click.option(
     '--doc-id', type=str, default=None,
     help='Google Docs ID to publish comments'
 )
-def cli(module_path, current_language, target_languages, doc_id):
+def cli(module_path, current_language, target_languages, action, doc_id):
     content = load_module(module_path)
     ai = AIEngine()
-    translated = ai.translate_module(content, current_language, target_languages)
-    # print(translated)
+
+    text_to_insert = ""
+    if action[0] == "translate":
+        translated = ai.translate_module(content, current_language, target_languages)
+        text_to_insert = translated
+        # print(translated)
+    elif action[0] == "instruct":
+        instructed = ai.instruction_module(content, current_language, target_languages)
+        text_to_insert = instructed
 
     service_account_file = str(os.getenv("SERVICE_ACCOUNT_FILE_PATH"))
     gdocs = GoogleDocsEngine(service_account_file, doc_id)
 
     if doc_id:
-        gdocs.insert_text(translated)
-        click.echo(f"Comments published to Docs ID: {doc_id}")
+        gdocs.insert_text(text_to_insert)
+        click.echo(f"Document published to Docs ID: {doc_id}")
     else:
         click.echo("\n### Translations:\n")
-        click.echo(translated)
+        click.echo(text_to_insert)
 
 
 if __name__ == "__main__":
