@@ -107,6 +107,7 @@ Instructions for Translation
      ```{target_lang}
      …code…
      ```end
+   Do not forget this.
 
 ---
 
@@ -118,4 +119,16 @@ Translated Module Text:
 ```text
 {translated_doc}
 ```
+"""
+
+def build_instruction_conversion_prompt(instruction_text: str, current_lang: str, target_lang: str) -> str:
+    return f"""Convert the following document that gives translation instructions from {current_lang} to {target_lang}.
+
+Change all references, explanations, and code snippets accordingly. Preserve the structure and formatting.
+
+--- START OF DOCUMENT ---
+
+{instruction_text}
+
+--- END OF DOCUMENT ---
 """

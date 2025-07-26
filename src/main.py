@@ -30,7 +30,7 @@ def load_module(path: str) -> str:
 )
 @click.option(
     '--action', '-a',
-    type=click.Choice(['translate', 'instruct'], case_sensitive=False),
+    type=click.Choice(['translate', 'instruct', 'recast'], case_sensitive=False),
     multiple=True,
     default=['translate'],
     show_default=True,
@@ -52,6 +52,9 @@ def cli(module_path, current_language, target_languages, action, doc_id):
     elif action[0] == "instruct":
         instructed = ai.instruction_module(content, current_language, target_languages)
         text_to_insert = instructed
+    elif action[0] == "recast":
+        recasted = ai.instruction_conversion_module(content, current_language, target_languages)
+        text_to_insert = recasted
 
     service_account_file = str(os.getenv("SERVICE_ACCOUNT_FILE_PATH"))
     gdocs = GoogleDocsEngine(service_account_file, doc_id)
