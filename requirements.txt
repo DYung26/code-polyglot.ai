@@ -22,7 +22,7 @@ jiter==0.10.0
 oauthlib==3.3.1
 openai==1.97.1
 proto-plus==1.26.1
-protobuf==6.31.1
+protobuf==7.36.2
 pyasn1==0.6.1
 pyasn1_modules==0.4.2
 pydantic==2.11.7
